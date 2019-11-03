@@ -4,6 +4,8 @@ import {Button} from "react-bootstrap";
 import {connect} from 'react-redux';
 import {withRouter} from "react-router-dom";
 import * as postsAction from "../actions/PostsAction"
+import {toast, ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -27,7 +29,7 @@ class PostsGrid extends Component {
     }, {
         headerName: "Title", field: "title", sortable: true, width: 300
     }, {
-        headerName: "Body", field: "body", sortable: true, width: 'auto'
+        headerName: "Body", field: "body", sortable: true, width: 900
     }];
 
     constructor(props) {
@@ -36,11 +38,14 @@ class PostsGrid extends Component {
             columnDefs: this.columnDefs,
             rowSelection: "multiple",
             disableSubmit: true,
+            showToast: false
         };
 
         this.onGridReady.bind(this);
         this.onRowSelected.bind(this);
         this.reviewPosts.bind(this);
+        this.navigateTo.bind(this);
+        this.autoSelectRows.bind(this);
     }
 
     componentDidMount = () => {
@@ -49,13 +54,39 @@ class PostsGrid extends Component {
             .then(rowData => {
                 this.setState({
                     rowData: rowData
-                })
-            })
-    }
+                });
+                if(this.props.posts.length > 0) {
+                    console.log('calling autoselect')
+                    this.autoSelectRows(this.props.posts)
+                }
+            });
+        console.log('Comp Ready');
+        if (this.props.posts.length > 0) {
+            this.setState({
+                    showToast: true
+                }
+            );
+            toast.info(`${this.props.posts.length} post(s) selected to review`)
+        }
+    };
 
     onGridReady = (params) => {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
+        console.log('Grid Ready')
+    };
+
+    autoSelectRows = (posts) => {
+        /*this.gridApi.forEachNode( (node, index) => {
+            posts.forEach(post => {
+                console.log(post.id);
+                console.log(node.id);
+               if(post.id == node.id) {
+                   node.selected = true;
+                   this.gridApi.get
+               }
+            })
+        });*/
     };
 
     onRowSelected = () => {
@@ -69,14 +100,28 @@ class PostsGrid extends Component {
         event.preventDefault();
         const selectedRows = this.gridApi.getSelectedRows();
         this.props.updatePosts(selectedRows);
-        this.props.history.push("/review");
+        this.navigateTo("review");
+    };
+
+    navigateTo = (destination) => {
+        this.props.history.push(`/${destination}`);
     };
 
     render = () => {
         return (
             <React.Fragment>
                 <h1>Posts</h1>
-                <div style={{height: '100vh', width: '100%'}} className="ag-theme-balham">
+                <ToastContainer
+                    position="top-right"
+                    autoClose={false}
+                    newestOnTop={false}
+                    closeOnClick={false}
+                    rtl={false}
+                    pauseOnVisibilityChange
+                    draggable={false}
+                    onClick={()=> this.navigateTo("review")}
+                />
+                <div style={{height: '700px', width: '100%'}} className="ag-theme-balham">
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}

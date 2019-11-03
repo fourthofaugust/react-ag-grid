@@ -26,7 +26,7 @@ class PostsReviewGrid extends Component {
     }, {
         headerName: "Title", field: "title", sortable: true, width: 300
     }, {
-        headerName: "Body", field: "body", sortable: true, width: 'auto'
+        headerName: "Body", field: "body", sortable: true, width: 900
     }];
 
     constructor(props) {
@@ -53,7 +53,7 @@ class PostsReviewGrid extends Component {
         return (
             <React.Fragment>
                 <h1>Posts Review</h1>
-                <div style={{height: '100vh', width: '100%'}} className="ag-theme-balham">
+                <div style={{height: '700px', width: '100%'}} className="ag-theme-balham">
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         rowData={this.props.posts}
@@ -61,7 +61,7 @@ class PostsReviewGrid extends Component {
                     >
                     </AgGridReact>
                 </div>
-                <Button type="button" onClick={this.returnToPosts}>Return to Posts</Button>
+                <Button type="button" onClick={() => this.returnToPosts(false)}>Return to Posts</Button>
                 <Button type="button" onClick={() => this.returnToPosts(true)}>Reset</Button>
             </React.Fragment>
         );
