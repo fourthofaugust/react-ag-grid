@@ -10,8 +10,10 @@ import {Provider} from 'react-redux';
 import {HashRouter} from "react-router-dom";
 import configureStore from './store'
 
+const store = configureStore();
+
 ReactDOM.render(
-    <Provider store={configureStore()}>
+    <Provider store={store}>
         <HashRouter>
             <App/>
         </HashRouter>

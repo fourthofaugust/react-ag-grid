@@ -1,9 +1,21 @@
-export default (state = {}, action) => {
+import {UPDATE_POSTS, REMOVE_ALL_POSTS} from "../actions/Types";
+
+const initialState = {
+    posts: [],
+};
+
+export default (state = initialState, action) => {
     switch (action.type) {
-        case 'ADD_POST_ACTION':
+        case UPDATE_POSTS:
             return {
-                result: action.payload
-            }
+                ...state,
+                posts: [...action.posts]
+            };
+        case REMOVE_ALL_POSTS:
+            return {
+                ...state,
+                posts: []
+            };
         default:
             return state
     }

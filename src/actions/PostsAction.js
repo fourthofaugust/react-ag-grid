@@ -1,6 +1,15 @@
-export const addPost = () => dispatch => {
-    dispatch({
-        type: 'ADD_POST_ACTION',
-        payload: 'result_of_simple_action'
-    })
+import {REMOVE_ALL_POSTS, UPDATE_POSTS} from "./Types";
+
+export const updatePosts = (posts) => {
+    return {
+        type: UPDATE_POSTS,
+        posts: posts
+    }
+};
+
+export const removeAllPosts = () => {
+    return {
+        type: REMOVE_ALL_POSTS,
+        posts: []
+    }
 };

@@ -1,6 +1,21 @@
 import React, {Component} from 'react';
-import { AgGridReact } from 'ag-grid-react';
+import {AgGridReact} from 'ag-grid-react';
 import {Button} from "react-bootstrap";
+import {connect} from 'react-redux';
+import {withRouter} from "react-router-dom";
+import * as postsAction from "../actions/PostsAction"
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updatePosts: posts => dispatch(postsAction.updatePosts(posts))
+    }
+};
+
+const mapStateToProps = (state) => {
+    return {
+        posts: state.PostsReducer.posts
+    }
+};
 
 class PostsGrid extends Component {
 
@@ -18,7 +33,7 @@ class PostsGrid extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            columnDefs: this.columnDefs ,
+            columnDefs: this.columnDefs,
             rowSelection: "multiple",
             disableSubmit: true,
         };
@@ -28,7 +43,7 @@ class PostsGrid extends Component {
         this.reviewPosts.bind(this);
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         fetch(this.POSTS_URL)
             .then(result => result.json())
             .then(rowData => {
@@ -47,19 +62,21 @@ class PostsGrid extends Component {
         const selectedRows = this.gridApi.getSelectedRows();
         this.setState({
             disableSubmit: selectedRows.length === 0
-        })
+        });
     };
 
     reviewPosts = (event) => {
         event.preventDefault();
-        console.log(`Clicked Submit`)
+        const selectedRows = this.gridApi.getSelectedRows();
+        this.props.updatePosts(selectedRows);
+        this.props.history.push("/review");
     };
 
-    render() {
+    render = () => {
         return (
             <React.Fragment>
-            <h1>Posts</h1>
-                <div style={{ height: '100vh', width: '100%' }} className="ag-theme-balham">
+                <h1>Posts</h1>
+                <div style={{height: '100vh', width: '100%'}} className="ag-theme-balham">
                     <AgGridReact
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}
@@ -70,10 +87,10 @@ class PostsGrid extends Component {
                     >
                     </AgGridReact>
                 </div>
-               <Button type="button" disabled={this.state.disableSubmit} onClick={this.reviewPosts}> Submit </Button>
+                <Button type="button" disabled={this.state.disableSubmit} onClick={this.reviewPosts}> Submit </Button>
             </React.Fragment>
         );
     }
 }
 
-export default PostsGrid;
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(PostsGrid));

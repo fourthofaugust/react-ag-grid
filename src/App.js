@@ -1,30 +1,26 @@
 import React, {Component} from 'react';
 import './App.css';
 import {HashRouter, Route, Switch} from "react-router-dom";
-import {addPost} from "./actions/PostsAction";
-import {connect} from "react-redux";
 import Posts from "./pages/Posts";
 import Review from "./pages/Review";
-
-const mapStateToProps = state => ({
-    ...state
-});
-
-const mapDispatchToProps = dispatch => ({
-    addPost: () => dispatch(addPost())
-});
 
 class App extends Component {
     render() {
         return (
             <HashRouter>
+                 /*
+                 a common header can go here
+                  */
                 <Switch>
                     <Route path="/" exact component={Posts}/>
                     <Route path="/review" component={Review}/>
                 </Switch>
+                /*
+                 a common footer can go here
+                  */
             </HashRouter>
         );
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
