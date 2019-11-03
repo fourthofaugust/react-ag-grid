@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import './App.css';
-import {HashRouter, Route, Switch, Redirect} from "react-router-dom";
+import {HashRouter, Route, Switch} from "react-router-dom";
 import {addPost} from "./actions/PostsAction";
 import {connect} from "react-redux";
+import Posts from "./pages/Posts";
+import Review from "./pages/Review";
 
 const mapStateToProps = state => ({
     ...state
@@ -13,17 +15,16 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class App extends Component {
-  render() {
-    return (
-        <React.Fragment>
+    render() {
+        return (
             <HashRouter>
                 <Switch>
-                    <Route/>
-                    <Route/>
+                    <Route path="/" exact component={Posts}/>
+                    <Route path="/review" component={Review}/>
                 </Switch>
             </HashRouter>
-        </React.Fragment>
-    );
-  }
+        );
+    }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);
