@@ -38,7 +38,8 @@ class PostsGrid extends Component {
             columnDefs: this.columnDefs,
             rowSelection: "multiple",
             disableSubmit: true,
-            showToast: false
+            showToast: false,
+            toastId: 'NA'
         };
 
         this.onGridReady.bind(this);
@@ -55,18 +56,19 @@ class PostsGrid extends Component {
                 this.setState({
                     rowData: rowData
                 });
-                if(this.props.posts.length > 0) {
-                    console.log('calling autoselect')
+                if (this.props.posts.length > 0) {
                     this.autoSelectRows(this.props.posts)
                 }
             });
-        console.log('Comp Ready');
         if (this.props.posts.length > 0) {
             this.setState({
                     showToast: true
                 }
             );
-            toast.info(`${this.props.posts.length} post(s) selected to review`)
+            const reLoadedToastId = toast.info(`${this.props.posts.length} post(s) selected to review`);
+            this.setState({
+                toastId: reLoadedToastId
+            })
         }
     };
 
@@ -91,15 +93,30 @@ class PostsGrid extends Component {
 
     onRowSelected = () => {
         const selectedRows = this.gridApi.getSelectedRows();
-        this.setState({
-            disableSubmit: selectedRows.length === 0
-        });
+        this.props.updatePosts(selectedRows);
+        if (this.state.toastId !== 'NA') {
+            toast.dismiss(this.state.toastId);
+        }
+        const currentToastId = toast.info(`${this.props.posts.length} post(s) selected to review`);
+        if (selectedRows.length === 0) {
+            toast.dismiss(currentToastId);
+            this.setState({
+                disableSubmit: selectedRows.length === 0,
+                toastId: 'NA'
+            });
+        } else {
+            this.setState({
+                disableSubmit: selectedRows.length === 0,
+                toastId: currentToastId
+            });
+        }
+
     };
 
     reviewPosts = (event) => {
         event.preventDefault();
-        const selectedRows = this.gridApi.getSelectedRows();
-        this.props.updatePosts(selectedRows);
+        // const selectedRows = this.gridApi.getSelectedRows();
+        // this.props.updatePosts(selectedRows);
         this.navigateTo("review");
     };
 
@@ -119,7 +136,8 @@ class PostsGrid extends Component {
                     rtl={false}
                     pauseOnVisibilityChange
                     draggable={false}
-                    onClick={()=> this.navigateTo("review")}
+                    closeButton={false}
+                    onClick={() => this.navigateTo("review")}
                 />
                 <div style={{height: '700px', width: '100%'}} className="ag-theme-balham">
                     <AgGridReact
