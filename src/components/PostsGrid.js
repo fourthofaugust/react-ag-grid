@@ -27,16 +27,29 @@ class PostsGrid extends Component {
     columnDefs = [{
         headerName: "ID", field: "id", sortable: true, width: 100, checkboxSelection: true
     }, {
-        headerName: "Title", field: "title", sortable: true, width: 300
+        headerName: "Title", field: "title", sortable: true, width: 300, editable: true
     }, {
-        headerName: "Body", field: "body", sortable: true, width: 900
-    }];
+        headerName: "Body", field: "body", sortable: true, width: 400
+    }, {
+        headerName: "Custom Number",
+        field: "customNumber",
+        sortable: true,
+        width: 300
+    }, {
+        headerName: "Custom Number Clone",
+        field: "customNumberClone",
+        sortable: true,
+        width: 300,
+        editable: true,
+        singleClickEdit: true
+    },];
 
     constructor(props) {
         super(props);
         this.state = {
             columnDefs: this.columnDefs,
             rowSelection: "multiple",
+            suppressRowClickSelection: true,
             disableSubmit: true,
             showToast: false,
             toastId: 'NA'
@@ -47,12 +60,17 @@ class PostsGrid extends Component {
         this.reviewPosts.bind(this);
         this.navigateTo.bind(this);
         this.autoSelectRows.bind(this);
+        this.onCellEdited.bind(this);
     }
 
     componentDidMount = () => {
         fetch(this.POSTS_URL)
             .then(result => result.json())
             .then(rowData => {
+                // Need additional numeric column
+                rowData.map(row => {
+                    return {...row.customNumber = Math.floor(1000 + Math.random() * 900)}
+                });
                 this.setState({
                     rowData: rowData
                 });
@@ -93,7 +111,15 @@ class PostsGrid extends Component {
 
     onRowSelected = () => {
         const selectedRows = this.gridApi.getSelectedRows();
-        this.props.updatePosts(selectedRows);
+        this.props.updatePosts(selectedRows.map(val => {
+            if (val.customNumberClone && val.customNumberClone !== "") {
+                return {...val, customNumber: val.customNumber - Number(val.customNumberClone)}
+            } else if (val.customNumberClone && val.customNumberClone === "") {
+                return val;
+            } else {
+                return {...val, customNumberClone: ""}
+            }
+        }));
         if (this.state.toastId !== 'NA') {
             toast.dismiss(this.state.toastId);
         }
@@ -124,6 +150,10 @@ class PostsGrid extends Component {
         this.props.history.push(`/${destination}`);
     };
 
+    onCellEdited = (event) => {
+        event.node.setSelected(event.value !== "");
+    };
+
     render = () => {
         return (
             <React.Fragment>
@@ -147,6 +177,8 @@ class PostsGrid extends Component {
                         defaultColDef={this.state.defaultColDef}
                         onGridReady={this.onGridReady}
                         onRowSelected={this.onRowSelected}
+                        onCellEditingStopped={this.onCellEdited}
+                        suppressRowClickSelection={this.state.suppressRowClickSelection}
                     >
                     </AgGridReact>
                 </div>

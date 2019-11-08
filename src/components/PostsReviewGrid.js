@@ -26,7 +26,11 @@ class PostsReviewGrid extends Component {
     }, {
         headerName: "Title", field: "title", sortable: true, width: 300
     }, {
-        headerName: "Body", field: "body", sortable: true, width: 900
+        headerName: "Body", field: "body", sortable: true, width: 400
+    },{
+        headerName: "Custom Number", field: "customNumber", sortable: true, width: 300
+    },{
+        headerName: "Custom Number Clone", field: "customNumberClone", sortable: true, width: 300
     }];
 
     constructor(props) {
