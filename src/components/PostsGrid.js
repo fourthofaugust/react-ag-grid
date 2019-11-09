@@ -97,16 +97,13 @@ class PostsGrid extends Component {
     };
 
     autoSelectRows = (posts) => {
-        /*this.gridApi.forEachNode( (node, index) => {
+        this.gridApi.forEachNode( node => {
             posts.forEach(post => {
-                console.log(post.id);
-                console.log(node.id);
-               if(post.id == node.id) {
-                   node.selected = true;
-                   this.gridApi.get
+               if(post.id === node.data.id) {
+                   node.setSelected(true);
                }
             })
-        });*/
+        });
     };
 
     onRowSelected = () => {
