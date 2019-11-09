@@ -114,7 +114,7 @@ class PostsGrid extends Component {
             } else if (val.customNumberClone && val.customNumberClone === "") {
                 return val;
             } else {
-                return {...val, customNumberClone: ""}
+                return {...val, customNumberClone: val.customNumber}
             }
         }));
         if (this.state.toastId !== 'NA') {
