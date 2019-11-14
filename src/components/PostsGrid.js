@@ -74,6 +74,7 @@ class PostsGrid extends Component {
                 this.setState({
                     rowData: rowData
                 });
+                // Outside fetch
                 if (this.props.posts.length > 0) {
                     this.autoSelectRows(this.props.posts)
                 }
@@ -105,6 +106,7 @@ class PostsGrid extends Component {
             })
         });
     };
+
 
     onRowSelected = () => {
         const selectedRows = this.gridApi.getSelectedRows();
